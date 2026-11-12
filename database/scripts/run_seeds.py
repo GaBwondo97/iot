@@ -6,6 +6,7 @@ Idempotent: safe to re-run.
 Usage: python database/scripts/run_seeds.py
 """
 
+import asyncio
 import os
 import sys
 from pathlib import Path
@@ -15,6 +16,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from sqlalchemy import create_engine, text
+from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.exc import OperationalError
 from dotenv import load_dotenv
 
@@ -26,6 +28,9 @@ if not DATABASE_URL:
     print("ERROR: DATABASE_URL not set. Copy .env.example to .env and fill in values.")
     sys.exit(1)
 
+# Convert asyncpg URL to psycopg2 for synchronous operations
+SYNC_DATABASE_URL = DATABASE_URL.replace("postgresql+asyncpg://", "postgresql+psycopg2://")
+
 SEED_DIR = Path(__file__).resolve().parent.parent / "seeds"
 SEED_FILES = [
     "seed_cities.sql",
@@ -33,7 +38,7 @@ SEED_FILES = [
 ]
 
 def run_seeds():
-    engine = create_engine(DATABASE_URL)
+    engine = create_engine(SYNC_DATABASE_URL)
     try:
         with engine.connect() as conn:
             # Enable UUID extension if not already present
