@@ -1,0 +1,13 @@
+
+{
+    "broker": "localhost",
+    "port": 1883,
+    "keepalive": 60,
+    "client_id": "citypulse_iot_client",
+    "topics": {
+        "weather": "citypulse/weather",
+        "air_quality": "citypulse/air_quality",
+        "traffic": "citypulse/traffic",
+        "population": "citypulse/population"
+    }
+}

@@ -1,0 +1,97 @@
+
+{
+  "monitoring_categories": [
+    {
+      "category_id": "WEATHER",
+      "category_name": "Weather Monitoring",
+      "enabled": true,
+      "parameters": [
+        {
+          "name": "temperature",
+          "unit": "°C"
+        },
+        {
+          "name": "humidity",
+          "unit": "%"
+        },
+        {
+          "name": "wind_speed",
+          "unit": "km/h"
+        },
+        {
+          "name": "rainfall",
+          "unit": "mm"
+        }
+      ]
+    },
+    {
+      "category_id": "AIR",
+      "category_name": "Air Quality Monitoring",
+      "enabled": true,
+      "parameters": [
+        {
+          "name": "pm2_5",
+          "unit": "µg/m³"
+        },
+        {
+          "name": "pm10",
+          "unit": "µg/m³"
+        },
+        {
+          "name": "co2",
+          "unit": "ppm"
+        },
+        {
+          "name": "aqi",
+          "unit": "index"
+        }
+      ]
+    },
+    {
+      "category_id": "TRAFFIC",
+      "category_name": "Traffic Monitoring",
+      "enabled": true,
+      "parameters": [
+        {
+          "name": "vehicle_count",
+          "unit": "vehicles"
+        },
+        {
+          "name": "average_speed",
+          "unit": "km/h"
+        },
+        {
+          "name": "traffic_density",
+          "unit": "vehicles/km"
+        },
+        {
+          "name": "congestion_category",
+          "unit": "category"
+        }
+      ]
+    },
+    {
+      "category_id": "POPULATION",
+      "category_name": "Population Monitoring",
+      "enabled": true,
+      "parameters": [
+        {
+          "name": "estimated_population",
+          "unit": "people"
+        },
+        {
+          "name": "population_density",
+          "unit": "people/km²"
+        },
+        {
+          "name": "crowd_density_category",
+          "unit": "category"
+        },
+        {
+          "name": "population_change",
+          "unit": "people"
+        }
+      ]
+    }
+  ]
+}
