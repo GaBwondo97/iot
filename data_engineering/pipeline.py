@@ -72,7 +72,6 @@ async def upsert_observation(
     Returns:
         True if inserted, False if duplicate (skipped)
     """
-    # Get city and indicator UUIDs
     city = await get_or_create_city(session, obs.city_id)
     if not city:
         raise ValueError(f"City not found: {obs.city_id}")
@@ -81,10 +80,8 @@ async def upsert_observation(
     if not indicator:
         raise ValueError(f"Indicator not found: {obs.indicator_code}")
 
-    # Determine source_name based on observation type
     source_name = "open_meteo" if isinstance(obs, WeatherObservation) else "openaq"
 
-    # Check for existing observation (deduplication)
     existing = await session.execute(
         select(DBObservation).where(
             DBObservation.city_id == city.id,
@@ -94,9 +91,8 @@ async def upsert_observation(
         )
     )
     if existing.scalar_one_or_none():
-        return False  # Duplicate, skipped
+        return False
 
-    # Create new observation
     new_obs = DBObservation(
         city_id=city.id,
         indicator_id=indicator.id,
@@ -120,9 +116,7 @@ async def ingest_city_weather(
     session: AsyncSession,
     city_code: str,
 ) -> IngestionResult:
-    """
-    Fetch and ingest weather for a single city.
-    """
+    """Fetch and ingest weather for a single city."""
     result = IngestionResult(city_code=city_code)
 
     try:
@@ -147,17 +141,12 @@ async def ingest_city_weather(
 
 
 async def run_weather_ingestion() -> List[IngestionResult]:
-    """
-    Run weather ingestion for all pilot cities.
-
-    Returns list of IngestionResult per city.
-    """
+    """Run weather ingestion for all pilot cities."""
     from app.db.session import AsyncSessionLocal
 
     results = []
 
     async with AsyncSessionLocal() as session:
-        # Import here to avoid circular imports
         from data_engineering.config import get_all_city_codes
 
         for city_code in get_all_city_codes():
@@ -165,7 +154,6 @@ async def run_weather_ingestion() -> List[IngestionResult]:
             city_result = await ingest_city_weather(session, city_code)
             results.append(city_result)
 
-            # Commit after each city to avoid long transactions
             try:
                 await session.commit()
             except Exception as e:
@@ -181,9 +169,7 @@ async def ingest_city_air_quality(
     session: AsyncSession,
     city_code: str,
 ) -> IngestionResult:
-    """
-    Fetch and ingest air quality for a single city.
-    """
+    """Fetch and ingest air quality for a single city."""
     result = IngestionResult(city_code=city_code)
 
     try:
@@ -212,11 +198,7 @@ async def ingest_city_air_quality(
 
 
 async def run_air_quality_ingestion() -> List[IngestionResult]:
-    """
-    Run air quality ingestion for all pilot cities.
-
-    Returns list of IngestionResult per city.
-    """
+    """Run air quality ingestion for all pilot cities."""
     from app.db.session import AsyncSessionLocal
 
     results = []
@@ -241,18 +223,15 @@ async def run_air_quality_ingestion() -> List[IngestionResult]:
 
 
 async def run_combined_ingestion() -> Tuple[List[IngestionResult], List[IngestionResult]]:
-    """
-    Run both weather and air quality ingestion.
-
-    Returns tuple of (weather_results, air_quality_results).
-    """
+    """Run both weather and air quality ingestion."""
     weather_results = await run_weather_ingestion()
     air_quality_results = await run_air_quality_ingestion()
     return weather_results, air_quality_results
+
+
 # ============================================================
-# IoT Message Processing Pipeline (from remote contribution)
+# IoT Message Processing Pipeline
 # ============================================================
-# Import IoT processing components
 try:
     from data_engineering.schemas.observation import Observation, RejectRecord
     from data_engineering.schemas.process_result import ProcessResult
@@ -263,7 +242,6 @@ try:
 
     _IOT_PIPELINE_AVAILABLE = True
 except ImportError:
-    # IoT pipeline modules not yet available
     _IOT_PIPELINE_AVAILABLE = False
     Observation = None
     RejectRecord = None
@@ -273,31 +251,26 @@ except ImportError:
     normalize_observation = None
     Deduplicator = None
 
-# Module-level deduplicator instance for IoT pipeline
 _iot_deduplicator = Deduplicator() if _IOT_PIPELINE_AVAILABLE and Deduplicator else None
 
 
-def process_iot_message(payload: Dict[str, Any]) -> "ProcessResult":
+def process_iot_message(payload: Dict[str, Any]) -> Any:
     """
     End-to-end processing of a single IoT message.
 
     Pipeline: Parse -> Validate -> Normalize -> Deduplicate
-
-    Returns ProcessResult with accepted and rejected observations.
     """
     if not _IOT_PIPELINE_AVAILABLE:
-        raise RuntimeError("IoT pipeline components not available. Ensure data_engineering schemas, adapters, validation, normalization, and deduplication modules are present.")
+        raise RuntimeError("IoT pipeline components not available.")
 
     result = ProcessResult(accepted=[], rejected=[])
 
-    # 1. Adapt/Parse
     parsed_records, parsing_errors = parse_iot_payload(payload)
     for err in parsing_errors:
         result.add_rejection(err.raw_data, err.reason)
 
-    # 2. Validate, Normalize, Deduplicate
     for obs in parsed_records:
-        if not _iot_deduplicator.is_unique(obs):
+        if _iot_deduplicator and not _iot_deduplicator.is_unique(obs):
             result.add_rejection(obs.model_dump(), "Duplicate record")
             continue
 

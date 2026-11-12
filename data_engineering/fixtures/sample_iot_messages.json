@@ -1,0 +1,43 @@
+[
+  {
+    "device_id": "env_sensor_ch01",
+    "city_id": "kuala_lumpur_cheras",
+    "timestamp": "2026-11-12T15:00:00Z",
+    "metrics": {
+      "temperature": {
+        "value": 33.5,
+        "unit": "C"
+      },
+      "humidity": {
+        "value": 85.0,
+        "unit": "%"
+      },
+      "pm25": {
+        "value": 110.0,
+        "unit": "ug/m3"
+      }
+    }
+  },
+  {
+    "device_id": "traffic_cam_t410",
+    "city_id": "kuala_lumpur_cheras",
+    "timestamp": "2026-11-12T15:05:00Z",
+    "metrics": {
+      "traffic_speed": {
+        "value": 12.5,
+        "unit": "km/h"
+      }
+    }
+  },
+  {
+    "device_id": "env_sensor_ch01",
+    "city_id": "kuala_lumpur_cheras",
+    "timestamp": "2026-11-12T15:00:00Z",
+    "metrics": {
+      "temperature": {
+        "value": 33.5,
+        "unit": "C"
+      }
+    }
+  }
+]

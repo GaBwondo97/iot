@@ -1,0 +1,17 @@
+metrics:
+  temperature:
+    unit: "C"
+    min: -20
+    max: 55
+  humidity:
+    unit: "%"
+    min: 0
+    max: 100
+  pm25:
+    unit: "ug/m3"
+    min: 0
+    max: 500
+  traffic_speed:
+    unit: "km/h"
+    min: 0
+    max: 120

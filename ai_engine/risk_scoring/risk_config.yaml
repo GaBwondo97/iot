@@ -1,0 +1,6 @@
+weights:
+  environmental: 0.6
+  mobility: 0.4
+thresholds:
+  high_risk: 75.0
+  medium_risk: 50.0
