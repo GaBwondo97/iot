@@ -1,0 +1,7 @@
+cities:
+  kuala_lumpur_cheras:
+    name: "Cheras, Kuala Lumpur"
+    coordinates: [3.1068, 101.7258]
+    zones:
+      - "Bukit Manda'rina"
+      - "Riana South"

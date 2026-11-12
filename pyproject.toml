@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "citypulse-ai"
+version = "0.1.0"
+description = "CityPulse AI: Data Pipeline and Risk Fusion Engine"
+authors = [{name = "Datathon Team"}]
+dependencies = [
+    "pydantic>=2.0.0",
+    "pyyaml>=6.0",
+    "requests>=2.31.0",
+    "pytest>=7.4.0"
+]
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-ra -q"
+testpaths = [
+    "tests",
+]
